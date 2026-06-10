@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Little Linguists 🐌</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky:#EAF6FF; --cloud:#FFFFFF;
+    --coral:#FF6B6B; --sun:#FFC93C; --leaf:#5FD08A; --berry:#8A7BFF; --ocean:#38B6E3; --ink:#3A3357;
+    --shadow:0 8px 0 rgba(58,51,87,.12);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    font-family:'Nunito',sans-serif; color:var(--ink);
+    background:
+      radial-gradient(circle at 15% 10%, #FFF3D6 0 140px, transparent 141px),
+      radial-gradient(circle at 90% 20%, #FFE2E2 0 110px, transparent 111px),
+      radial-gradient(circle at 80% 90%, #DFF5E7 0 160px, transparent 161px),
+      var(--sky);
+    min-height:100vh; padding-bottom:40px;
+  }
+  h1,h2,.btn-tab,.word-main,.big-btn,.tally,.lang-pill,.chip,.game-tile{font-family:'Fredoka',sans-serif;}
+
+  header{ text-align:center; padding:18px 16px 6px; }
+  .mascot-row{ display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;}
+  .mascot{
+    font-size:60px; line-height:1; cursor:pointer; user-select:none; display:inline-block;
+    filter:drop-shadow(0 6px 0 rgba(58,51,87,.12)); animation:float 3.2s ease-in-out infinite;
+    transition:transform .15s;
+  }
+  .mascot:active{ transform:scale(.9);}
+  @keyframes float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .bubble{
+    background:var(--cloud); border:4px solid var(--ink); border-radius:24px;
+    padding:10px 18px; font-family:'Fredoka',sans-serif; font-weight:600; font-size:20px;
+    position:relative; box-shadow:var(--shadow); cursor:pointer;
+  }
+  .bubble::after{
+    content:""; position:absolute; left:-14px; top:50%; transform:translateY(-50%);
+    border:10px solid transparent; border-right-color:var(--ink);
+  }
+  h1{ font-size:clamp(24px,6vw,38px); margin:8px 0 2px;}
+  h1 .a1{color:var(--coral);} h1 .a2{color:var(--ocean);}
+  .subtitle{ margin:0; font-weight:800; opacity:.65; font-size:14px;}
+
+  /* language selector */
+  .langbar{ display:flex; justify-content:center; gap:8px; flex-wrap:wrap; padding:12px 10px 0;}
+  .lang-pill{
+    border:4px solid var(--ink); border-radius:999px; background:var(--cloud);
+    padding:8px 16px; font-size:17px; font-weight:600; cursor:pointer;
+    box-shadow:var(--shadow); transition:transform .12s, background .2s;
+    display:flex; align-items:center; gap:7px;
+  }
+  .lang-pill:active{ transform:translateY(3px); box-shadow:0 4px 0 rgba(58,51,87,.12);}
+  .lang-pill.active{ background:var(--coral); color:#fff;}
+
+  .topbar{
+    display:flex; justify-content:center; gap:12px; align-items:center;
+    margin:12px auto 0; flex-wrap:wrap; padding:0 12px;
+  }
+  .tally{
+    background:var(--cloud); border:4px solid var(--sun); border-radius:999px;
+    padding:8px 18px; font-size:19px; font-weight:600; box-shadow:var(--shadow);
+  }
+  .speed{
+    background:var(--cloud); border:4px solid var(--ocean); border-radius:999px;
+    padding:6px 8px; display:flex; gap:4px; box-shadow:var(--shadow);
+  }
+  .speed button{
+    border:none; background:transparent; font-size:22px; padding:4px 10px;
+    border-radius:999px; cursor:pointer; transition:transform .1s;
+  }
+  .speed button.on{ background:var(--ocean);}
+  .speed button:active{ transform:scale(.85);}
+  #echoBtn{ font-size:17px; font-weight:800; font-family:'Nunito',sans-serif;}
+  #echoBtn.on{ background:var(--berry); color:#fff;}
+
+  nav{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; padding:14px 12px 6px;}
+  .btn-tab{
+    border:4px solid var(--ink); border-radius:22px; background:var(--cloud);
+    font-size:16px; font-weight:600; padding:9px 13px; cursor:pointer;
+    box-shadow:var(--shadow); transition:transform .12s, background .2s;
+    display:flex; flex-direction:column; align-items:center; gap:2px; min-width:82px;
+  }
+  .btn-tab .ico{font-size:28px;}
+  .btn-tab:active{ transform:translateY(4px); box-shadow:0 4px 0 rgba(58,51,87,.12);}
+  .btn-tab.active{ background:var(--sun); transform:translateY(2px);}
+
+  main{ max-width:920px; margin:0 auto; padding:10px 14px;}
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px;}
+  .grid.compact{ grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px;}
+  .card{
+    background:var(--cloud); border:4px solid var(--ink); border-radius:26px;
+    padding:16px 8px 12px; text-align:center; cursor:pointer; user-select:none;
+    box-shadow:var(--shadow); transition:transform .12s; position:relative; overflow:hidden;
+  }
+  .card:active{ transform:scale(.94);}
+  .card.pop{ animation:pop .5s;}
+  @keyframes pop{ 0%{transform:scale(1)} 35%{transform:scale(1.12) rotate(-3deg)} 70%{transform:scale(.96) rotate(2deg)} 100%{transform:scale(1)} }
+  .emoji{ font-size:54px; line-height:1.1; display:block;}
+  .numeral{ font-family:'Fredoka',sans-serif; font-size:34px; font-weight:700; color:var(--berry); display:block;}
+  .swatch{ width:56px; height:56px; border-radius:50%; margin:0 auto; border:4px solid rgba(58,51,87,.25);}
+  .word-main{ font-size:20px; font-weight:600; margin-top:6px; line-height:1.15;}
+  .word-sub{ font-size:13px; font-weight:800; opacity:.55; margin-top:2px; line-height:1.2;}
+  .compact .word-main{ font-size:14px;}
+  .compact .card{ padding:10px 4px 8px; border-radius:18px; border-width:3px;}
+  .speak-hint{ position:absolute; top:8px; right:10px; font-size:15px; opacity:.4;}
+
+  .chips{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:6px 0 14px;}
+  .chip{
+    border:3px solid var(--ink); border-radius:999px; background:var(--cloud);
+    padding:7px 15px; font-size:16px; font-weight:600; cursor:pointer; box-shadow:0 5px 0 rgba(58,51,87,.12);
+  }
+  .chip.active{ background:var(--leaf); }
+  .chip:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(58,51,87,.12);}
+
+  /* games */
+  .game-menu{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; }
+  .game-tile{
+    border:4px solid var(--ink); border-radius:26px; padding:22px 12px; text-align:center;
+    cursor:pointer; font-size:19px; font-weight:600; box-shadow:var(--shadow); transition:transform .12s;
+  }
+  .game-tile span{ display:block; font-size:48px; margin-bottom:6px;}
+  .game-tile:active{ transform:translateY(4px); box-shadow:0 4px 0 rgba(58,51,87,.12);}
+  .t1{background:#FFE9E9;} .t2{background:#EFE9FF;} .t3{background:#E4F6FF;} .t4{background:#E9FBEF;}
+
+  .game-wrap{ text-align:center;}
+  .big-btn{
+    border:4px solid var(--ink); border-radius:26px; background:var(--coral); color:#fff;
+    font-size:21px; font-weight:600; padding:13px 24px; cursor:pointer;
+    box-shadow:var(--shadow); margin:10px 6px; transition:transform .12s;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .big-btn.listen{ background:var(--berry);}
+  .big-btn.back{ background:var(--ocean); font-size:17px; padding:9px 18px;}
+  .big-btn:active{ transform:translateY(4px); box-shadow:0 4px 0 rgba(58,51,87,.12);}
+  .game-grid{ display:grid; grid-template-columns:repeat(2,minmax(130px,1fr)); gap:16px; max-width:460px; margin:10px auto;}
+  .game-grid.three{ grid-template-columns:repeat(3,minmax(96px,1fr)); max-width:520px;}
+  .game-card{ padding:20px 8px;}
+  .game-card .emoji{ font-size:64px;}
+  .game-card.right{ background:#E4FBEE; border-color:var(--leaf); animation:pop .5s;}
+  .game-card.wrong{ animation:shake .4s; background:#FFECEC;}
+  @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .feedback{ font-family:'Fredoka',sans-serif; font-size:22px; min-height:32px; margin-top:6px;}
+
+  /* memory */
+  .mem-grid{ display:grid; grid-template-columns:repeat(4,minmax(72px,1fr)); gap:12px; max-width:520px; margin:12px auto;}
+  .mem-card{
+    border:4px solid var(--ink); border-radius:20px; background:var(--berry);
+    min-height:88px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:34px; color:#fff; box-shadow:var(--shadow);
+    transition:transform .15s, background .2s; font-family:'Fredoka',sans-serif; font-weight:600;
+    padding:6px; text-align:center; user-select:none;
+  }
+  .mem-card .face{ display:none; font-size:inherit; line-height:1.1;}
+  .mem-card .face.word{ font-size:17px; color:var(--ink);}
+  .mem-card.up{ background:var(--cloud);}
+  .mem-card.up .face{ display:block;}
+  .mem-card.up .qm{ display:none;}
+  .mem-card.done{ background:#E4FBEE; border-color:var(--leaf); cursor:default; animation:pop .5s;}
+
+  /* balloons */
+  .balloons{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin:14px auto; max-width:560px;}
+  .balloon{
+    width:92px; height:112px; border-radius:50% 50% 48% 48%; border:4px solid var(--ink);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-family:'Fredoka',sans-serif; font-size:34px; font-weight:700; color:#fff;
+    box-shadow:var(--shadow); position:relative; transition:transform .15s;
+    animation:bob 2.6s ease-in-out infinite;
+  }
+  .balloon::after{ content:"🧵"; position:absolute; bottom:-22px; font-size:16px;}
+  .balloon:active{ transform:scale(.92);}
+  .balloon.popg{ animation:popaway .45s forwards;}
+  @keyframes bob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  @keyframes popaway{ 60%{transform:scale(1.25); opacity:1;} 100%{transform:scale(0); opacity:0;} }
+
+  .burst{ position:fixed; font-size:26px; pointer-events:none; animation:fly 1s ease-out forwards; z-index:50;}
+  @keyframes fly{ to{ transform:translate(var(--dx),var(--dy)) rotate(540deg); opacity:0;} }
+
+  /* parents' help modal */
+  .help-pill{
+    border:3px solid var(--ink); border-radius:999px; background:var(--cloud);
+    padding:8px 14px; font-size:15px; font-weight:800; cursor:pointer;
+    box-shadow:0 5px 0 rgba(58,51,87,.12); font-family:'Nunito',sans-serif;
+  }
+  .help-pill:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(58,51,87,.12);}
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(58,51,87,.45); z-index:100;
+    display:flex; align-items:center; justify-content:center; padding:18px;
+  }
+  .modal{
+    background:var(--cloud); border:4px solid var(--ink); border-radius:26px;
+    max-width:520px; width:100%; max-height:85vh; overflow-y:auto;
+    padding:22px 24px; box-shadow:0 12px 0 rgba(58,51,87,.18); text-align:left;
+  }
+  .modal h2{ margin:0 0 4px; font-size:24px;}
+  .modal p{ font-size:15px; line-height:1.5; margin:10px 0;}
+  .modal .tip{ display:flex; gap:10px; align-items:flex-start; margin:12px 0;}
+  .modal .tip .ico{ font-size:24px; flex:0 0 auto;}
+  .modal .close-btn{
+    border:4px solid var(--ink); border-radius:999px; background:var(--coral); color:#fff;
+    font-family:'Fredoka',sans-serif; font-size:18px; font-weight:600; padding:10px 22px;
+    cursor:pointer; box-shadow:0 6px 0 rgba(58,51,87,.12); display:block; margin:14px auto 2px;
+  }
+  .modal .close-btn:active{ transform:translateY(3px); box-shadow:0 3px 0 rgba(58,51,87,.12);}
+
+  .hidden{display:none !important;}
+  footer{ text-align:center; margin-top:26px; font-weight:800; opacity:.5; font-size:13px;}
+  @media (max-width:480px){
+    .grid{ grid-template-columns:repeat(2,1fr); gap:12px;}
+    .grid.compact{ grid-template-columns:repeat(3,1fr);}
+    .emoji{font-size:48px;}
+    .mem-grid{ grid-template-columns:repeat(3,1fr);}
+  }
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="mascot-row">
+    <span class="mascot" id="mascot" role="button" aria-label="Léo the snail says hello">🐌</span>
+    <div class="bubble" id="helloBubble">Tap me! 👆</div>
+  </div>
+  <h1><span class="a1">Little</span> <span class="a2">Linguists</span></h1>
+  <p class="subtitle" id="subtitle">Tap a sticker to hear it speak! 🔊</p>
+</header>
+
+<div class="langbar" id="langbar">
+  <button class="lang-pill active" data-lang="fr">🇫🇷 Français</button>
+  <button class="lang-pill" data-lang="en">🇦🇺 English</button>
+  <button class="lang-pill" data-lang="zh">🇨🇳 中文</button>
+  <button class="lang-pill" data-lang="ta">🇮🇳 தமிழ்</button>
+  <button class="lang-pill" data-lang="ar">🇸🇦 العربية</button>
+</div>
+
+<div class="topbar">
+  <div class="tally">⭐ <span id="stars">0</span> stars</div>
+  <div class="speed" aria-label="Talking speed">
+    <button id="slowBtn" title="Slow like a turtle">🐢</button>
+    <button id="fastBtn" class="on" title="Normal speed">🐰</button>
+  </div>
+  <div class="speed" style="border-color:var(--berry)" aria-label="Repeat mode">
+    <button id="echoBtn" title="Say it twice: once normal, once slow">🔁 ×2</button>
+  </div>
+  <button class="help-pill" id="helpBtn">👨‍👩‍👧 For grown-ups</button>
+</div>
+
+<nav id="tabs">
+  <button class="btn-tab active" data-tab="animals"><span class="ico">🐶</span>Animals</button>
+  <button class="btn-tab" data-tab="colors"><span class="ico">🌈</span>Colours</button>
+  <button class="btn-tab" data-tab="numbers"><span class="ico">🔢</span>Numbers</button>
+  <button class="btn-tab" data-tab="food"><span class="ico">🍓</span>Food</button>
+  <button class="btn-tab" data-tab="hello"><span class="ico">👋</span>Hello!</button>
+  <button class="btn-tab" data-tab="games"><span class="ico">🎮</span>Games</button>
+</nav>
+
+<main>
+  <div id="numChips" class="chips hidden"></div>
+  <div id="cards" class="grid"></div>
+
+  <!-- games -->
+  <div id="gameMenu" class="game-menu hidden"></div>
+  <div id="gameArea" class="game-wrap hidden">
+    <button class="big-btn back" id="backToGames">⬅ Games</button>
+    <h2 id="gameTitle"></h2>
+    <div id="gameBody"></div>
+    <div class="feedback" id="feedback"></div>
+    <div id="gameControls"></div>
+  </div>
+</main>
+
+<div class="modal-overlay hidden" id="helpModal">
+  <div class="modal" role="dialog" aria-label="Help for grown-ups">
+    <h2>👨‍👩‍👧 For grown-ups</h2>
+    <p>Welcome! This little app helps children learn first words in <strong>French, English, Mandarin, Tamil and Arabic</strong>. Tap any sticker and it speaks the word aloud. A few tips to get the best out of it:</p>
+    <div class="tip"><span class="ico">🔊</span><p><strong>Wake up the sound.</strong> Tablets and phones keep audio asleep until the first tap. Tap Léo the snail (or his "Tap me!" bubble) once and everything will talk after that.</p></div>
+    <div class="tip"><span class="ico">🐢</span><p><strong>Turtle button = slow speech.</strong> Great for hearing each sound clearly. The rabbit returns to normal speed.</p></div>
+    <div class="tip"><span class="ico">🔁</span><p><strong>×2 Repeat mode is the practice trick.</strong> Each word plays once at normal speed, pauses, then plays again slowly. The pause is your child's turn — encourage them to say the word out loud before the slow repeat, then copy it again after. Hearing it, saying it, and hearing it again is how little ones really learn.</p></div>
+    <div class="tip"><span class="ico">📱</span><p><strong>Install it like an app — tablets &amp; phones.</strong> Open the link in your browser, then: <em>iPad/iPhone (Safari):</em> tap the Share button (square with arrow) → <em>Add to Home Screen</em> → Add. <em>Android (Chrome):</em> tap menu ⋮ → <em>Add to Home screen</em> (or <em>Install app</em>) → Add. Your child gets a tappable icon that opens full screen with no browser bars.</p></div>
+    <div class="tip"><span class="ico">💻</span><p><strong>Install it like an app — computers.</strong> <em>Chrome:</em> menu ⋮ → <em>Cast, save and share</em> → <em>Install page as app</em> (or <em>Create shortcut</em>, ticking "Open as window"). <em>Edge:</em> menu ⋯ → <em>Apps</em> → <em>Install this site as an app</em>. It then appears in the Start menu or dock like any other app.</p></div>
+    <div class="tip"><span class="ico">🗣️</span><p><strong>Voices.</strong> French and English voices are built into nearly every device. Mandarin, Tamil and Arabic depend on what's installed — if a word sounds wrong or silent, add the voice in your device's settings (usually under Accessibility → Spoken Content or Text-to-speech), which takes about a minute.</p></div>
+    <div class="tip"><span class="ico">🛜</span><p><strong>Works offline.</strong> Once the page is open, no internet is needed. Stars reset each visit — they're just for fun!</p></div>
+    <button class="close-btn" id="helpClose">Got it! ✨</button>
+  </div>
+</div>
+
+<footer>Made with ❤️ 🥐 🥟 🪔</footer>
+
+<script>
+/* ================= LANGUAGES ================= */
+const LANGS = {
+  fr:{ name:"Français", tts:"fr-FR", bravo:"Bravo!", listen:"Écoute... 👂", again:"🔊 Hear it again",
+       greet:["Bonjour!","Salut!","Coucou!","Ça va?","Bravo!"] },
+  en:{ name:"English", tts:"en-AU", bravo:"Great job!", listen:"Listen... 👂", again:"🔊 Hear it again",
+       greet:["Hello!","Hi there!","G'day!","How are you?","Well done!"] },
+  zh:{ name:"中文", tts:"zh-CN", bravo:"真棒!", listen:"听一听... 👂", again:"🔊 再听一次",
+       greet:["你好!","你好吗?","真棒!","早上好!"] },
+  ta:{ name:"தமிழ்", tts:"ta-IN", bravo:"சபாஷ்!", listen:"கேள்... 👂", again:"🔊 மீண்டும் கேள்",
+       greet:["வணக்கம்!","எப்படி இருக்கிறாய்?","சபாஷ்!"] },
+  ar:{ name:"العربية", tts:"ar-SA", bravo:"أحسنت!", listen:"استمع... 👂", again:"🔊 استمع مرة أخرى",
+       greet:["مرحبا!","أهلا!","كيف حالك؟","أحسنت!"] }
+};
+let lang = "fr";
+
+/* ================= VOCABULARY =================
+   each item: e=emoji OR c=colour hex; fr/en/ta words; zh + py pinyin */
+const VOCAB = {
+animals:[
+ {e:"🐶",fr:"le chien",en:"dog",zh:"狗",py:"gǒu",ta:"நாய்"},
+ {e:"🐱",fr:"le chat",en:"cat",zh:"猫",py:"māo",ta:"பூனை"},
+ {e:"🐰",fr:"le lapin",en:"rabbit",zh:"兔子",py:"tùzi",ta:"முயல்"},
+ {e:"🐦",fr:"l'oiseau",en:"bird",zh:"鸟",py:"niǎo",ta:"பறவை"},
+ {e:"🐟",fr:"le poisson",en:"fish",zh:"鱼",py:"yú",ta:"மீன்"},
+ {e:"🐴",fr:"le cheval",en:"horse",zh:"马",py:"mǎ",ta:"குதிரை"},
+ {e:"🐮",fr:"la vache",en:"cow",zh:"牛",py:"niú",ta:"பசு"},
+ {e:"🦁",fr:"le lion",en:"lion",zh:"狮子",py:"shīzi",ta:"சிங்கம்"},
+ {e:"🐘",fr:"l'éléphant",en:"elephant",zh:"大象",py:"dàxiàng",ta:"யானை"},
+ {e:"🐸",fr:"la grenouille",en:"frog",zh:"青蛙",py:"qīngwā",ta:"தவளை"},
+ {e:"🦆",fr:"le canard",en:"duck",zh:"鸭子",py:"yāzi",ta:"வாத்து"},
+ {e:"🐌",fr:"l'escargot",en:"snail",zh:"蜗牛",py:"wōniú",ta:"நத்தை"},
+ {e:"🐻",fr:"l'ours",en:"bear",zh:"熊",py:"xióng",ta:"கரடி"},
+ {e:"🐵",fr:"le singe",en:"monkey",zh:"猴子",py:"hóuzi",ta:"குரங்கு"},
+ {e:"🐷",fr:"le cochon",en:"pig",zh:"猪",py:"zhū",ta:"பன்றி"},
+ {e:"🐑",fr:"le mouton",en:"sheep",zh:"羊",py:"yáng",ta:"ஆடு"},
+ {e:"🐔",fr:"la poule",en:"chicken",zh:"鸡",py:"jī",ta:"கோழி"},
+ {e:"🦋",fr:"le papillon",en:"butterfly",zh:"蝴蝶",py:"húdié",ta:"பட்டாம்பூச்சி"},
+ {e:"🐢",fr:"la tortue",en:"turtle",zh:"乌龟",py:"wūguī",ta:"ஆமை"},
+ {e:"🐯",fr:"le tigre",en:"tiger",zh:"老虎",py:"lǎohǔ",ta:"புலி"},
+ {e:"🐭",fr:"la souris",en:"mouse",zh:"老鼠",py:"lǎoshǔ",ta:"எலி"},
+ {e:"🐝",fr:"l'abeille",en:"bee",zh:"蜜蜂",py:"mìfēng",ta:"தேனீ"},
+ {e:"🦉",fr:"le hibou",en:"owl",zh:"猫头鹰",py:"māotóuyīng",ta:"ஆந்தை"},
+ {e:"🦊",fr:"le renard",en:"fox",zh:"狐狸",py:"húli",ta:"நரி"}
+],
+colors:[
+ {c:"#FF5A5A",fr:"rouge",en:"red",zh:"红色",py:"hóngsè",ta:"சிவப்பு"},
+ {c:"#3D8BFF",fr:"bleu",en:"blue",zh:"蓝色",py:"lánsè",ta:"நீலம்"},
+ {c:"#FFD23C",fr:"jaune",en:"yellow",zh:"黄色",py:"huángsè",ta:"மஞ்சள்"},
+ {c:"#4ECB71",fr:"vert",en:"green",zh:"绿色",py:"lǜsè",ta:"பச்சை"},
+ {c:"#FF9A3C",fr:"orange",en:"orange",zh:"橙色",py:"chéngsè",ta:"ஆரஞ்சு"},
+ {c:"#9B6BFF",fr:"violet",en:"purple",zh:"紫色",py:"zǐsè",ta:"ஊதா"},
+ {c:"#FF7BC2",fr:"rose",en:"pink",zh:"粉红色",py:"fěnhóngsè",ta:"இளஞ்சிவப்பு"},
+ {c:"#3A3357",fr:"noir",en:"black",zh:"黑色",py:"hēisè",ta:"கருப்பு"},
+ {c:"#FFFFFF",fr:"blanc",en:"white",zh:"白色",py:"báisè",ta:"வெள்ளை"},
+ {c:"#9C6B3F",fr:"marron",en:"brown",zh:"棕色",py:"zōngsè",ta:"பழுப்பு"},
+ {c:"#9AA2AD",fr:"gris",en:"grey",zh:"灰色",py:"huīsè",ta:"சாம்பல்"},
+ {c:"#E8B43A",fr:"doré",en:"gold",zh:"金色",py:"jīnsè",ta:"தங்கம்"},
+ {c:"#C7CDD6",fr:"argenté",en:"silver",zh:"银色",py:"yínsè",ta:"வெள்ளி"},
+ {c:"#35C6B8",fr:"turquoise",en:"turquoise",zh:"青色",py:"qīngsè",ta:"நீலப்பச்சை"}
+],
+food:[
+ {e:"🍎",fr:"la pomme",en:"apple",zh:"苹果",py:"píngguǒ",ta:"ஆப்பிள்"},
+ {e:"🍌",fr:"la banane",en:"banana",zh:"香蕉",py:"xiāngjiāo",ta:"வாழைப்பழம்"},
+ {e:"🍓",fr:"la fraise",en:"strawberry",zh:"草莓",py:"cǎoméi",ta:"ஸ்ட்ராபெர்ரி"},
+ {e:"🍞",fr:"le pain",en:"bread",zh:"面包",py:"miànbāo",ta:"ரொட்டி"},
+ {e:"🧀",fr:"le fromage",en:"cheese",zh:"奶酪",py:"nǎilào",ta:"பாலாடைக்கட்டி"},
+ {e:"🥛",fr:"le lait",en:"milk",zh:"牛奶",py:"niúnǎi",ta:"பால்"},
+ {e:"💧",fr:"l'eau",en:"water",zh:"水",py:"shuǐ",ta:"தண்ணீர்"},
+ {e:"🍰",fr:"le gâteau",en:"cake",zh:"蛋糕",py:"dàngāo",ta:"கேக்"},
+ {e:"🥕",fr:"la carotte",en:"carrot",zh:"胡萝卜",py:"húluóbo",ta:"கேரட்"},
+ {e:"🥐",fr:"le croissant",en:"croissant",zh:"牛角包",py:"niújiǎobāo",ta:"குரோசான்"},
+ {e:"🍚",fr:"le riz",en:"rice",zh:"米饭",py:"mǐfàn",ta:"சோறு"},
+ {e:"🥚",fr:"l'œuf",en:"egg",zh:"鸡蛋",py:"jīdàn",ta:"முட்டை"},
+ {e:"🍊",fr:"l'orange",en:"orange (fruit)",zh:"橙子",py:"chéngzi",ta:"ஆரஞ்சுப்பழம்"},
+ {e:"🥭",fr:"la mangue",en:"mango",zh:"芒果",py:"mángguǒ",ta:"மாம்பழம்"},
+ {e:"🍇",fr:"le raisin",en:"grapes",zh:"葡萄",py:"pútáo",ta:"திராட்சை"},
+ {e:"🍉",fr:"la pastèque",en:"watermelon",zh:"西瓜",py:"xīguā",ta:"தர்பூசணி"},
+ {e:"🍦",fr:"la glace",en:"ice cream",zh:"冰淇淋",py:"bīngqílín",ta:"ஐஸ்கிரீம்"},
+ {e:"🍅",fr:"la tomate",en:"tomato",zh:"番茄",py:"fānqié",ta:"தக்காளி"},
+ {e:"🥔",fr:"la pomme de terre",en:"potato",zh:"土豆",py:"tǔdòu",ta:"உருளைக்கிழங்கு"},
+ {e:"🧃",fr:"le jus",en:"juice",zh:"果汁",py:"guǒzhī",ta:"பழச்சாறு"}
+],
+hello:[
+ {e:"👋",fr:"Bonjour!",en:"Hello!",zh:"你好!",py:"nǐ hǎo",ta:"வணக்கம்!"},
+ {e:"🚪",fr:"Au revoir!",en:"Goodbye!",zh:"再见!",py:"zàijiàn",ta:"போய் வருகிறேன்!"},
+ {e:"🙏",fr:"Merci!",en:"Thank you!",zh:"谢谢!",py:"xièxie",ta:"நன்றி!"},
+ {e:"🥺",fr:"S'il te plaît",en:"Please",zh:"请",py:"qǐng",ta:"தயவுசெய்து"},
+ {e:"✅",fr:"Oui",en:"Yes",zh:"是",py:"shì",ta:"ஆம்"},
+ {e:"❌",fr:"Non",en:"No",zh:"不",py:"bù",ta:"இல்லை"},
+ {e:"❤️",fr:"Je t'aime",en:"I love you",zh:"我爱你",py:"wǒ ài nǐ",ta:"நான் உன்னை நேசிக்கிறேன்"},
+ {e:"🌙",fr:"Bonne nuit!",en:"Good night!",zh:"晚安!",py:"wǎn'ān",ta:"இனிய இரவு!"},
+ {e:"😊",fr:"Ça va?",en:"How are you?",zh:"你好吗?",py:"nǐ hǎo ma",ta:"எப்படி இருக்கிறாய்?"},
+ {e:"🎉",fr:"Bravo!",en:"Well done!",zh:"真棒!",py:"zhēn bàng",ta:"சபாஷ்!"}
+]
+};
+
+/* ---- Arabic translations, merged into every vocabulary item ---- */
+const AR = {
+ dog:"كلب",cat:"قطة",rabbit:"أرنب",bird:"عصفور",fish:"سمكة",horse:"حصان",cow:"بقرة",lion:"أسد",
+ elephant:"فيل",frog:"ضفدع",duck:"بطة",snail:"حلزون",bear:"دب",monkey:"قرد",pig:"خنزير",sheep:"خروف",
+ chicken:"دجاجة",butterfly:"فراشة",turtle:"سلحفاة",tiger:"نمر",mouse:"فأر",bee:"نحلة",owl:"بومة",fox:"ثعلب",
+ red:"أحمر",blue:"أزرق",yellow:"أصفر",green:"أخضر",orange:"برتقالي",purple:"بنفسجي",pink:"وردي",
+ black:"أسود",white:"أبيض",brown:"بني",grey:"رمادي",gold:"ذهبي",silver:"فضي",turquoise:"فيروزي",
+ apple:"تفاحة",banana:"موزة",strawberry:"فراولة",bread:"خبز",cheese:"جبن",milk:"حليب",water:"ماء",
+ cake:"كعكة",carrot:"جزرة",croissant:"كرواسون",rice:"أرز",egg:"بيضة","orange (fruit)":"برتقالة",
+ mango:"مانجو",grapes:"عنب",watermelon:"بطيخ","ice cream":"آيس كريم",tomato:"طماطم",potato:"بطاطا",juice:"عصير",
+ "Hello!":"مرحبا!","Goodbye!":"مع السلامة!","Thank you!":"شكرا!",Please:"من فضلك",Yes:"نعم",No:"لا",
+ "I love you":"أحبك","Good night!":"تصبح على خير!","How are you?":"كيف حالك؟","Well done!":"أحسنت!"
+};
+Object.values(VOCAB).forEach(list=>list.forEach(it=>{ it.ar = AR[it.en] || it.en; }));
+
+/* ================= NUMBER WORDS 1-100 ================= */
+function frNum(n){
+  const u=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"];
+  if(n<20)return u[n];
+  if(n===100)return "cent";
+  const tens={20:"vingt",30:"trente",40:"quarante",50:"cinquante",60:"soixante"};
+  if(n<70){const t=Math.floor(n/10)*10,r=n%10;
+    if(r===0)return tens[t]; if(r===1)return tens[t]+" et un"; return tens[t]+"-"+u[r];}
+  if(n<80){ if(n===71)return "soixante et onze"; return "soixante-"+u[n-60];}
+  if(n===80)return "quatre-vingts";
+  return "quatre-vingt-"+u[n-80];
+}
+function enNum(n){
+  const u=["","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+  if(n<20)return u[n];
+  if(n===100)return "one hundred";
+  const t=["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+  const r=n%10;
+  return t[Math.floor(n/10)]+(r?"-"+u[r]:"");
+}
+function zhNum(n){
+  const c=["","一","二","三","四","五","六","七","八","九"];
+  if(n<10)return c[n];
+  if(n===10)return "十";
+  if(n<20)return "十"+c[n-10];
+  if(n===100)return "一百";
+  const t=Math.floor(n/10), r=n%10;
+  return c[t]+"十"+(r?c[r]:"");
+}
+function zhNumPy(n){
+  const p=["","yī","èr","sān","sì","wǔ","liù","qī","bā","jiǔ"];
+  if(n<10)return p[n];
+  if(n===10)return "shí";
+  if(n<20)return "shí"+p[n-10];
+  if(n===100)return "yībǎi";
+  const t=Math.floor(n/10), r=n%10;
+  return p[t]+"shí"+(r?p[r]:"");
+}
+function taNum(n){
+  const u=["","ஒன்று","இரண்டு","மூன்று","நான்கு","ஐந்து","ஆறு","ஏழு","எட்டு","ஒன்பது"];
+  const teens=["பத்து","பதினொன்று","பன்னிரண்டு","பதின்மூன்று","பதினான்கு","பதினைந்து","பதினாறு","பதினேழு","பதினெட்டு","பத்தொன்பது"];
+  const tensFull={20:"இருபது",30:"முப்பது",40:"நாற்பது",50:"ஐம்பது",60:"அறுபது",70:"எழுபது",80:"எண்பது",90:"தொண்ணூறு"};
+  const tensPre={20:"இருபத்து",30:"முப்பத்து",40:"நாற்பத்து",50:"ஐம்பத்து",60:"அறுபத்து",70:"எழுபத்து",80:"எண்பத்து",90:"தொண்ணூற்று"};
+  if(n<10)return u[n];
+  if(n<20)return teens[n-10];
+  if(n===100)return "நூறு";
+  const t=Math.floor(n/10)*10, r=n%10;
+  return r===0 ? tensFull[t] : tensPre[t]+" "+u[r];
+}
+function arNum(n){
+  const u=["","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"];
+  if(n<10)return u[n];
+  if(n===10)return "عشرة";
+  if(n===11)return "أحد عشر";
+  if(n===12)return "اثنا عشر";
+  if(n<20)return u[n-10]+" عشر";
+  if(n===100)return "مئة";
+  const tens={20:"عشرون",30:"ثلاثون",40:"أربعون",50:"خمسون",60:"ستون",70:"سبعون",80:"ثمانون",90:"تسعون"};
+  const t=Math.floor(n/10)*10, r=n%10;
+  return r===0 ? tens[t] : u[r]+" و"+tens[t];
+}
+function numWord(n, l){
+  return {fr:frNum, en:enNum, zh:zhNum, ta:taNum, ar:arNum}[l](n);
+}
+function numItem(n){
+  return {numeral:n, fr:frNum(n), en:enNum(n), zh:zhNum(n), py:zhNumPy(n), ta:taNum(n), ar:arNum(n)};
+}
+
+/* ================= SPEECH ================= */
+let rate = 0.78;
+let voices = [];
+function loadVoices(){ voices = speechSynthesis.getVoices(); }
+if("speechSynthesis" in window){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+function bestVoice(tts){
+  const base = tts.split("-")[0];
+  return voices.find(v=>v.lang===tts) || voices.find(v=>v.lang && v.lang.startsWith(base)) || null;
+}
+function speak(text, cb, rateOverride){
+  if(!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const tts = LANGS[lang].tts;
+  u.lang = tts;
+  const v = bestVoice(tts);
+  if(v) u.voice = v;
+  const base = rateOverride!==undefined ? rateOverride : rate;
+  u.rate = (lang==="zh" || lang==="ta" || lang==="ar") ? Math.min(base,0.8) : base;
+  u.pitch = 1.1;
+  if(cb) u.onend = cb;
+  speechSynthesis.speak(u);
+}
+/* Listen-echo loop: say it once, pause, say it again slower so the child can copy */
+let echo = false;
+let echoTimer = null;
+function speakWord(text){
+  clearTimeout(echoTimer);
+  if(!echo){ speak(text); return; }
+  speak(text, ()=>{
+    echoTimer = setTimeout(()=>{ speak(text, null, Math.max(rate*0.7, 0.45)); }, 1000);
+  });
+}
+function wordOf(item){ return item[lang]; }
+
+/* speed toggle */
+let rateDefault=0.78;
+rate=rateDefault;
+const slowBtn=document.getElementById("slowBtn"), fastBtn=document.getElementById("fastBtn");
+slowBtn.onclick=()=>{rate=0.5;slowBtn.classList.add("on");fastBtn.classList.remove("on");speakWord(LANGS[lang].greet[0]);};
+fastBtn.onclick=()=>{rate=rateDefault;fastBtn.classList.add("on");slowBtn.classList.remove("on");speakWord(LANGS[lang].greet[0]);};
+const echoBtn=document.getElementById("echoBtn");
+echoBtn.onclick=()=>{
+  echo=!echo;
+  echoBtn.classList.toggle("on",echo);
+  speakWord(LANGS[lang].greet[0]);
+};
+
+/* ================= STARS ================= */
+let stars=0;
+const starsEl=document.getElementById("stars");
+function addStar(x,y,count){
+  stars+=(count||1); starsEl.textContent=stars;
+  const icons=["⭐","🌟","✨","💛"];
+  for(let i=0;i<6;i++){
+    const s=document.createElement("span");
+    s.className="burst"; s.textContent=icons[i%icons.length];
+    s.style.left=(x||innerWidth/2)+"px"; s.style.top=(y||innerHeight/2)+"px";
+    s.style.setProperty("--dx",(Math.random()*220-110)+"px");
+    s.style.setProperty("--dy",(Math.random()*-200-40)+"px");
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),1100);
+  }
+}
+
+/* ================= MASCOT ================= */
+let bubbleTimer=null;
+function mascotSpeak(){
+  const bubble=document.getElementById("helloBubble");
+  const g = LANGS[lang].greet;
+  const t = g[Math.floor(Math.random()*g.length)];
+  bubble.textContent=t;
+  speak(t);
+  clearTimeout(bubbleTimer);
+  bubbleTimer=setTimeout(()=>{ bubble.textContent="Tap me! 👆"; },3500);
+}
+document.getElementById("mascot").onclick=mascotSpeak;
+document.getElementById("helloBubble").onclick=mascotSpeak;
+
+/* ================= LANGUAGE BAR ================= */
+document.getElementById("langbar").addEventListener("click",e=>{
+  const b=e.target.closest(".lang-pill"); if(!b)return;
+  document.querySelectorAll(".lang-pill").forEach(p=>p.classList.remove("active"));
+  b.classList.add("active");
+  lang=b.dataset.lang;
+  document.getElementById("helloBubble").textContent="Tap me! 👆";
+  speak(LANGS[lang].greet[0]);
+  refreshView();
+});
+
+/* ================= CARDS ================= */
+const cardsEl=document.getElementById("cards");
+const numChips=document.getElementById("numChips");
+const gameMenu=document.getElementById("gameMenu");
+const gameArea=document.getElementById("gameArea");
+let currentTab="animals";
+let numRange=[1,20];
+
+function subLabel(item){
+  if(lang==="zh") return (item.py?item.py+" · ":"")+(item.en||"");
+  if(lang==="en") return "";
+  return item.en||"";
+}
+function makeCard(item, compact){
+  const d=document.createElement("div");
+  d.className="card";
+  d.setAttribute("role","button");
+  let visual;
+  if(item.c) visual=`<div class="swatch" style="background:${item.c}"></div>`;
+  else if(item.numeral!==undefined) visual=`<span class="numeral">${item.numeral}</span>`;
+  else visual=`<span class="emoji">${item.e}</span>`;
+  const sub=subLabel(item);
+  d.innerHTML=`<span class="speak-hint">🔊</span>${visual}
+    <div class="word-main">${wordOf(item)}</div>` + (sub?`<div class="word-sub">${sub}</div>`:"");
+  d.onclick=(ev)=>{
+    d.classList.remove("pop"); void d.offsetWidth; d.classList.add("pop");
+    speakWord(wordOf(item));
+    addStar(ev.clientX,ev.clientY);
+  };
+  return d;
+}
+function renderCategory(cat){
+  cardsEl.classList.remove("compact");
+  numChips.classList.add("hidden");
+  cardsEl.innerHTML="";
+  VOCAB[cat].forEach(it=>cardsEl.appendChild(makeCard(it)));
+}
+function renderNumbers(){
+  numChips.classList.remove("hidden");
+  cardsEl.classList.add("compact");
+  numChips.innerHTML="";
+  const ranges=[[1,20],[21,40],[41,60],[61,80],[81,100]];
+  ranges.forEach(r=>{
+    const c=document.createElement("button");
+    c.className="chip"+(r[0]===numRange[0]?" active":"");
+    c.textContent=r[0]+" – "+r[1];
+    c.onclick=()=>{numRange=r; renderNumbers();};
+    numChips.appendChild(c);
+  });
+  cardsEl.innerHTML="";
+  for(let n=numRange[0]; n<=numRange[1]; n++) cardsEl.appendChild(makeCard(numItem(n)));
+}
+
+/* ================= TABS ================= */
+document.getElementById("tabs").addEventListener("click",e=>{
+  const btn=e.target.closest(".btn-tab"); if(!btn)return;
+  document.querySelectorAll(".btn-tab").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  currentTab=btn.dataset.tab;
+  refreshView();
+});
+function refreshView(){
+  gameMenu.classList.add("hidden"); gameArea.classList.add("hidden");
+  cardsEl.classList.add("hidden"); numChips.classList.add("hidden");
+  if(currentTab==="games"){ showGameMenu(); return; }
+  cardsEl.classList.remove("hidden");
+  if(currentTab==="numbers") renderNumbers();
+  else renderCategory(currentTab);
+}
+
+/* ================= GAMES ================= */
+const GAMES=[
+  {id:"find", icon:"👂", name:"Listen & Find", cls:"t1"},
+  {id:"memory", icon:"🃏", name:"Memory Match", cls:"t2"},
+  {id:"balloons", icon:"🎈", name:"Number Balloons", cls:"t3"},
+  {id:"splash", icon:"🎨", name:"Colour Splash", cls:"t4"}
+];
+const gameTitle=document.getElementById("gameTitle");
+const gameBody=document.getElementById("gameBody");
+const gameControls=document.getElementById("gameControls");
+const feedback=document.getElementById("feedback");
+
+function showGameMenu(){
+  gameArea.classList.add("hidden");
+  gameMenu.classList.remove("hidden");
+  gameMenu.innerHTML="";
+  GAMES.forEach(g=>{
+    const t=document.createElement("div");
+    t.className="game-tile "+g.cls;
+    t.innerHTML=`<span>${g.icon}</span>${g.name}`;
+    t.onclick=()=>startGame(g);
+    gameMenu.appendChild(t);
+  });
+}
+document.getElementById("backToGames").onclick=showGameMenu;
+
+function startGame(g){
+  gameMenu.classList.add("hidden");
+  gameArea.classList.remove("hidden");
+  gameTitle.textContent=g.icon+" "+g.name;
+  feedback.textContent="";
+  gameControls.innerHTML="";
+  if(g.id==="find")startFind();
+  if(g.id==="memory")startMemory();
+  if(g.id==="balloons")startBalloons();
+  if(g.id==="splash")startSplash();
+}
+function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
+function emojiPool(){ return [...VOCAB.animals,...VOCAB.food].filter(i=>i.e); }
+
+/* ---- 1) Listen & Find ---- */
+let findTarget=null, findLocked=false;
+function startFind(){
+  const listenBtn=document.createElement("button");
+  listenBtn.className="big-btn listen"; listenBtn.textContent=LANGS[lang].again;
+  listenBtn.onclick=()=>{ if(findTarget) speakWord(wordOf(findTarget)); };
+  const nextBtn=document.createElement("button");
+  nextBtn.className="big-btn"; nextBtn.textContent="Next ➜";
+  nextBtn.onclick=findRound;
+  gameControls.append(listenBtn,nextBtn);
+  findRound();
+}
+function findRound(){
+  findLocked=false; feedback.textContent="";
+  const opts=shuffle(emojiPool()).slice(0,4);
+  findTarget=opts[Math.floor(Math.random()*opts.length)];
+  gameBody.innerHTML="";
+  const grid=document.createElement("div"); grid.className="game-grid";
+  opts.forEach(item=>{
+    const d=document.createElement("div");
+    d.className="card game-card"; d.setAttribute("role","button");
+    d.innerHTML=`<span class="emoji">${item.e}</span>`;
+    d.onclick=(ev)=>{
+      if(findLocked)return;
+      if(item===findTarget){
+        findLocked=true; d.classList.add("right");
+        feedback.textContent="🎉 "+LANGS[lang].bravo+" "+wordOf(findTarget);
+        speak(LANGS[lang].bravo,()=>setTimeout(findRound,900));
+        addStar(ev.clientX,ev.clientY,2);
+      }else{
+        d.classList.remove("wrong"); void d.offsetWidth; d.classList.add("wrong");
+        feedback.textContent=LANGS[lang].listen;
+        speakWord(wordOf(findTarget));
+      }
+    };
+    grid.appendChild(d);
+  });
+  gameBody.appendChild(grid);
+  setTimeout(()=>speakWord(wordOf(findTarget)),400);
+}
+
+/* ---- 2) Memory Match (emoji <-> word) ---- */
+let memFirst=null, memLock=false, memLeft=0;
+function startMemory(){
+  feedback.textContent="Find the matching pairs! 🔍";
+  const picks=shuffle(emojiPool()).slice(0,6);
+  memLeft=6; memFirst=null; memLock=false;
+  let cards=[];
+  picks.forEach((item,i)=>{
+    cards.push({id:i,kind:"e",item});
+    cards.push({id:i,kind:"w",item});
+  });
+  cards=shuffle(cards);
+  gameBody.innerHTML="";
+  const grid=document.createElement("div"); grid.className="mem-grid";
+  cards.forEach(c=>{
+    const d=document.createElement("div");
+    d.className="mem-card";
+    d.innerHTML=`<span class="qm">❓</span><span class="face ${c.kind==="w"?"word":""}">${c.kind==="e"?c.item.e:wordOf(c.item)}</span>`;
+    d.onclick=()=>{
+      if(memLock||d.classList.contains("up")||d.classList.contains("done"))return;
+      d.classList.add("up");
+      speakWord(wordOf(c.item));
+      if(!memFirst){ memFirst={card:d,data:c}; return; }
+      if(memFirst.data.id===c.id && memFirst.data.kind!==c.kind){
+        d.classList.add("done"); memFirst.card.classList.add("done");
+        memFirst=null; memLeft--;
+        addStar(innerWidth/2,innerHeight/2,2);
+        if(memLeft===0){
+          feedback.textContent="🏆 "+LANGS[lang].bravo;
+          speak(LANGS[lang].bravo);
+          addStar(innerWidth/2,innerHeight/3,5);
+          setTimeout(startMemory,1800);
+        }
+      }else{
+        memLock=true;
+        const f=memFirst.card; memFirst=null;
+        setTimeout(()=>{ d.classList.remove("up"); f.classList.remove("up"); memLock=false; },850);
+      }
+    };
+    grid.appendChild(d);
+  });
+  gameBody.appendChild(grid);
+}
+
+/* ---- 3) Number Balloons ---- */
+const BAL_COLORS=["#FF6B6B","#38B6E3","#5FD08A","#FFC93C","#8A7BFF","#FF7BC2"];
+let balTarget=null, balLock=false;
+function startBalloons(){
+  const listenBtn=document.createElement("button");
+  listenBtn.className="big-btn listen"; listenBtn.textContent=LANGS[lang].again;
+  listenBtn.onclick=()=>{ if(balTarget!==null) speakWord(numWord(balTarget,lang)); };
+  const nextBtn=document.createElement("button");
+  nextBtn.className="big-btn"; nextBtn.textContent="Next ➜"; nextBtn.onclick=balRound;
+  gameControls.append(listenBtn,nextBtn);
+  balRound();
+}
+function balRound(){
+  balLock=false; feedback.textContent="Pop the right balloon! 🎈";
+  const nums=shuffle(Array.from({length:20},(_,i)=>i+1)).slice(0,6);
+  balTarget=nums[Math.floor(Math.random()*nums.length)];
+  gameBody.innerHTML="";
+  const wrap=document.createElement("div"); wrap.className="balloons";
+  nums.forEach((n,i)=>{
+    const b=document.createElement("div");
+    b.className="balloon"; b.style.background=BAL_COLORS[i%BAL_COLORS.length];
+    b.style.animationDelay=(i*0.25)+"s";
+    b.textContent=n;
+    b.onclick=(ev)=>{
+      if(balLock)return;
+      if(n===balTarget){
+        balLock=true; b.classList.add("popg");
+        feedback.textContent="🎉 "+LANGS[lang].bravo+" "+numWord(n,lang)+"!";
+        speak(LANGS[lang].bravo,()=>setTimeout(balRound,800));
+        addStar(ev.clientX,ev.clientY,2);
+      }else{
+        b.style.animation="none"; void b.offsetWidth; b.style.animation="shake .4s, bob 2.6s ease-in-out .4s infinite";
+        feedback.textContent=LANGS[lang].listen;
+        speakWord(numWord(balTarget,lang));
+      }
+    };
+    wrap.appendChild(b);
+  });
+  gameBody.appendChild(wrap);
+  setTimeout(()=>speakWord(numWord(balTarget,lang)),400);
+}
+
+/* ---- 4) Colour Splash ---- */
+let splashTarget=null, splashLock=false;
+function startSplash(){
+  const listenBtn=document.createElement("button");
+  listenBtn.className="big-btn listen"; listenBtn.textContent=LANGS[lang].again;
+  listenBtn.onclick=()=>{ if(splashTarget) speakWord(wordOf(splashTarget)); };
+  const nextBtn=document.createElement("button");
+  nextBtn.className="big-btn"; nextBtn.textContent="Next ➜"; nextBtn.onclick=splashRound;
+  gameControls.append(listenBtn,nextBtn);
+  splashRound();
+}
+function splashRound(){
+  splashLock=false; feedback.textContent="Tap the colour you hear! 🎨";
+  const opts=shuffle(VOCAB.colors).slice(0,4);
+  splashTarget=opts[Math.floor(Math.random()*opts.length)];
+  gameBody.innerHTML="";
+  const grid=document.createElement("div"); grid.className="game-grid";
+  opts.forEach(item=>{
+    const d=document.createElement("div");
+    d.className="card game-card"; d.setAttribute("role","button");
+    d.innerHTML=`<div class="swatch" style="width:74px;height:74px;background:${item.c}"></div>`;
+    d.onclick=(ev)=>{
+      if(splashLock)return;
+      if(item===splashTarget){
+        splashLock=true; d.classList.add("right");
+        feedback.textContent="🎉 "+LANGS[lang].bravo+" "+wordOf(splashTarget)+"!";
+        speak(LANGS[lang].bravo,()=>setTimeout(splashRound,800));
+        addStar(ev.clientX,ev.clientY,2);
+      }else{
+        d.classList.remove("wrong"); void d.offsetWidth; d.classList.add("wrong");
+        feedback.textContent=LANGS[lang].listen;
+        speakWord(wordOf(splashTarget));
+      }
+    };
+    grid.appendChild(d);
+  });
+  gameBody.appendChild(grid);
+  setTimeout(()=>speakWord(wordOf(splashTarget)),400);
+}
+
+/* ================= PARENTS' HELP ================= */
+const helpModal=document.getElementById("helpModal");
+document.getElementById("helpBtn").onclick=()=>helpModal.classList.remove("hidden");
+document.getElementById("helpClose").onclick=()=>helpModal.classList.add("hidden");
+helpModal.addEventListener("click",e=>{ if(e.target===helpModal) helpModal.classList.add("hidden"); });
+
+/* ================= START ================= */
+renderCategory("animals");
+</script>
+</body>
+</html>
